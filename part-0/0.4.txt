@@ -1,0 +1,35 @@
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server --> browser: HTML code
+browser -> server: HTTP GEt https://studies.cs.helsinki.fi/exampleapp/notes/main.css
+server --> browser: main.css
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes/main.js
+server --> browser: main.js
+
+note over browser : 
+browser starts to execute code 
+that requires data.json from server 
+end note 
+
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes/data.json 
+server --> browser : data.json [{content: "...", date: "..."}, ...]
+
+note over browser : 
+browser execute event handler that 
+display the notes
+end note 
+
+
+browser -> server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+
+note over server: 
+server persists the data that is submitted in the payload 
+end note 
+
+
+server --> browser : redirect https://studies.cs.helsinki.fi/exampleapp/notes
+
+note over browser : 
+browser then continues to repeat 
+the fetching and rerenders the page
+end note    
+
