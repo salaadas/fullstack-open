@@ -1,0 +1,16 @@
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server --> browser: HTML code
+browser -> server: HTTP GEt https://studies.cs.helsinki.fi/exampleapp/spa/main.css
+server --> browser: main.css
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa/main.js
+server --> browser: main.js
+
+note over browser : 
+browser starts to execute code 
+that requires data.json from server 
+end note 
+
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes/data.json 
+server --> browser : data.json [{content: "...", date: "..."}, ...]
+
+
