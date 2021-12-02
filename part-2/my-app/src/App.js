@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import notes from './data/notes';
 import Notes from './components/Notes';
+import useForm from './hooks/useForm';
 // import Courses from './components/Courses';
 // import courses from './data/courses';
 
 const App = () => {
   const [noteList, setNoteList] = useState(notes);
-  const [values, setValues] = useState({ note: '', important: false });
-
-  const handleChange = (e) => {
-    setValues((v) => ({ ...v, [e.target.name]: e.target.value }));
-  };
+  const [values, handleChange, setValues] = useForm({
+    note: '',
+    important: false,
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,6 +20,7 @@ const App = () => {
         id: noteList.length + 1,
         content: values.note,
         date: new Date().toISOString(),
+        important: values.important,
       },
     ]);
     setValues({ note: '', important: false });
@@ -35,12 +36,13 @@ const App = () => {
           onChange={handleChange}
           value={values.note}
         />
-        <button
-          type="button"
-          onChange={() => setValues((v) => ({ ...v, important: !v.important }))}
-        >
-          {values.important ? 'Mark as unimportant' : 'Mark as important'}
-        </button>{' '}
+        <input
+          onChange={handleChange}
+          type="checkbox"
+          checked={values.important}
+          name="important"
+          id="important"
+        />
         <button>Add note</button>
       </form>
       {/* <h1>Web development curriculum</h1>

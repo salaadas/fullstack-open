@@ -1,4 +1,6 @@
-const Note = ({ note }) => <li>{note.content}</li>;
+const Note = ({ note }) => (
+  <li style={{ color: note.important ? 'red' : 'black' }}>{note.content}</li>
+);
 
 const Notes = ({ notes }) => {
   return (
