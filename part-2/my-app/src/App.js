@@ -1,52 +1,65 @@
 import React, { useState } from 'react';
-import notes from './data/notes';
-import Notes from './components/Notes';
 import useForm from './hooks/useForm';
 // import Courses from './components/Courses';
 // import courses from './data/courses';
 
-const App = () => {
-  const [noteList, setNoteList] = useState(notes);
-  const [values, handleChange, setValues] = useForm({
-    note: '',
-    important: false,
-  });
+const App = (props) => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '39-44-5323523' },
+  ]);
 
-  const handleSubmit = (e) => {
+  const [show, setShow] = useState(true);
+
+  const [values, handleChange, setValues] = useForm({ name: '', number: '' });
+
+  const toggleList = () => setShow(!show);
+
+  const handleAddPerson = (e) => {
     e.preventDefault();
-    setNoteList((n) => [
-      ...n,
-      {
-        id: noteList.length + 1,
-        content: values.note,
-        date: new Date().toISOString(),
-        important: values.important,
-      },
-    ]);
-    setValues({ note: '', important: false });
+    if (!persons.find((p) => p.name === values.name)) {
+      setPersons(
+        persons.concat([{ name: values.name, number: values.number }])
+      );
+    } else {
+      alert(`${values.name} is already added to phonebook`);
+    }
+    setValues({ name: '', number: '' });
   };
 
   return (
     <div>
-      <Notes notes={noteList} />
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="note"
-          name="note"
-          onChange={handleChange}
-          value={values.note}
-        />
-        <input
-          onChange={handleChange}
-          type="checkbox"
-          checked={values.important}
-          name="important"
-          id="important"
-        />
-        <button>Add note</button>
+      <h2>PhoneBook</h2>
+      <span style={{ textDecoration: show ? 'none' : 'line-through' }}>
+        filter shown with
+      </span>{' '}
+      <input disabled={!show} />
+      <h2>add a new</h2>
+      <form onSubmit={handleAddPerson}>
+        <div>
+          name:{' '}
+          <input name="name" value={values.name} onChange={handleChange} />
+          number:{' '}
+          <input
+            name="number"
+            type="tel"
+            value={values.number}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
       </form>
-      {/* <h1>Web development curriculum</h1>
-      <Courses courses={courses} /> */}
+      <h2>Numbers</h2>
+      <div>
+        <button onClick={toggleList}>{show ? 'Hide' : 'Show'} contacts </button>
+        {show &&
+          persons.map((p) => (
+            <p key={p.name}>
+              {p.name} {p.number}
+            </p>
+          ))}
+      </div>
     </div>
   );
 };
