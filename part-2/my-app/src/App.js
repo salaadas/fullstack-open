@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import useForm from './hooks/useForm';
-// import Courses from './components/Courses';
-// import courses from './data/courses';
+import Filter from './components/Filter';
+import PersonForm from './components/PersonForm';
+import Contacts from './components/Contacts';
 
 const App = (props) => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '39-44-5323523' },
+    { name: 'Arto Hellas', number: '39-44-5323523', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
   ]);
 
   const [show, setShow] = useState(true);
 
-  const [values, handleChange, setValues] = useForm({ name: '', number: '' });
+  const [values, handleChange, setValues] = useForm({
+    name: '',
+    number: '',
+    filtered: '',
+  });
 
   const toggleList = () => setShow(!show);
 
@@ -23,43 +31,30 @@ const App = (props) => {
     } else {
       alert(`${values.name} is already added to phonebook`);
     }
-    setValues({ name: '', number: '' });
+    setValues({ name: '', number: '', filtered: '' });
   };
 
   return (
     <div>
       <h2>PhoneBook</h2>
-      <span style={{ textDecoration: show ? 'none' : 'line-through' }}>
-        filter shown with
-      </span>{' '}
-      <input disabled={!show} />
+      <Filter
+        filteredValues={values.filtered}
+        handleChange={handleChange}
+        show={show}
+      />
       <h2>add a new</h2>
-      <form onSubmit={handleAddPerson}>
-        <div>
-          name:{' '}
-          <input name="name" value={values.name} onChange={handleChange} />
-          number:{' '}
-          <input
-            name="number"
-            type="tel"
-            value={values.number}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        handleChange={handleChange}
+        handleSubmit={handleAddPerson}
+        values={values}
+      />
       <h2>Numbers</h2>
-      <div>
-        <button onClick={toggleList}>{show ? 'Hide' : 'Show'} contacts </button>
-        {show &&
-          persons.map((p) => (
-            <p key={p.name}>
-              {p.name} {p.number}
-            </p>
-          ))}
-      </div>
+      <Contacts
+        persons={persons}
+        show={show}
+        toggle={toggleList}
+        values={values}
+      />
     </div>
   );
 };
