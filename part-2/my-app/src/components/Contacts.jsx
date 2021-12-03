@@ -3,6 +3,7 @@ const Contacts = ({ persons, show, values, toggle }) => {
     <div>
       <button onClick={toggle}>{show ? 'Hide' : 'Show'} contacts </button>
       {show &&
+        persons &&
         persons
           .filter((p) =>
             p.name.toLowerCase().includes(values.filtered.toLowerCase())
