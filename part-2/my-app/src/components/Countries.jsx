@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import useForm from './hooks/useForm';
+
 import dotenv from 'dotenv';
 dotenv.config();
 
-const API_KEY = '7724a2855de96976177345d1ec186da5';
+const API_KEY = process.env.REACT_APP_WEATHER;
 
 // https://restcountries.com/v3.1/all
 // api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
@@ -22,16 +22,25 @@ const Country = ({ country }) => {
   useEffect(() => {
     axios
       .get(
-        'https://api.openweathermap.org/data/2.5/weather?q=Hanoi&appid=7724a2855de96976177345d1ec186da5'
+        `https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${API_KEY}`
       )
-      .then((res) => console.log(res));
+      .then((res) =>
+        setWeather({
+          temperature: `${(res.data.main.temp - 273.15).toFixed(2)} Celcius `,
+          wind: `${res.data.wind.speed} mph`,
+        })
+      );
   }, [capital]);
 
   return (
     <>
       <h2>{name}</h2>
-      <p>{capital}</p>
-      <p>{population}</p>
+      <p>
+        <b>captital:</b> {capital}
+      </p>
+      <p>
+        <b>population:</b> {population}
+      </p>
       <h3>Spoken languages</h3>
       <ul>
         {languages.map((l) => (
@@ -41,12 +50,10 @@ const Country = ({ country }) => {
       <img src={flag} alt={`${name.toLowerCase}'s flag'`} />
       <h3>Weather in {name}</h3>
       <p>
-        <b>temperature</b>
-        {weather.temperature}
+        <b>temperature</b> {weather.temperature}
       </p>
       <p>
-        <b>wind</b>
-        {weather.wind}
+        <b>wind</b> {weather.wind}
       </p>
     </>
   );
@@ -80,6 +87,8 @@ const Countries = ({ query, countries }) => {
     return <p>Too many matches, specify another filter</p>;
   } else if (countries.length === 1) {
     return <Country country={countries[0]} />;
+  } else if (query !== '' && !countries.length) {
+    return <p>No match for that</p>;
   } else {
     return (
       <>
@@ -91,31 +100,4 @@ const Countries = ({ query, countries }) => {
   }
 };
 
-const App = (props) => {
-  const [countries, setCountries] = useState([]);
-  const [values, handleChange] = useForm({ query: '' });
-
-  const filteredList = countries.filter((c) =>
-    c.name.common.toLowerCase().includes(values.query.toLowerCase())
-  );
-
-  useEffect(() => {
-    axios
-      .get('https://restcountries.com/v3.1/all')
-      .then((res) => setCountries(res.data));
-  }, []);
-
-  return (
-    <div>
-      <div className="query-field">
-        find countries{' '}
-        <input name="query" value={values.query} onChange={handleChange} />
-      </div>
-      <div className="countries">
-        <Countries query={values.query} countries={filteredList} />
-      </div>
-    </div>
-  );
-};
-
-export default App;
+export default Countries;
