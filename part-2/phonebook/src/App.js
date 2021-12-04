@@ -3,15 +3,13 @@ import useForm from './hooks/useForm';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Contacts from './components/Contacts';
-import axios from 'axios';
+import { createOne, getAll, updateOne } from './services/persons';
 
-const App = (props) => {
+const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then((res) => setPersons(res.data));
+    getAll().then((initialData) => setPersons(initialData));
   }, []);
 
   const [show, setShow] = useState(true);
@@ -26,12 +24,32 @@ const App = (props) => {
 
   const handleAddPerson = (e) => {
     e.preventDefault();
+
+    const newPerson = {
+      name: values.name,
+      number: values.number,
+    };
+
     if (!persons.find((p) => p.name === values.name)) {
-      setPersons(
-        persons.concat([{ name: values.name, number: values.number }])
-      );
+      createOne(newPerson).then((res) => {
+        setPersons(persons.concat(res));
+      });
     } else {
-      alert(`${values.name} is already added to phonebook`);
+      const willUpdate = window.confirm(
+        `${values.name} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (willUpdate) {
+        const updatePerson = persons.find((p) => p.name === values.name);
+        updateOne(updatePerson.id, {
+          ...updatePerson,
+          number: values.number,
+        }).then((res) =>
+          setPersons(
+            persons.map((p) => (p.name === updatePerson.name ? res : p))
+          )
+        );
+      }
     }
     setValues({ name: '', number: '', filtered: '' });
   };
@@ -56,6 +74,7 @@ const App = (props) => {
         show={show}
         toggle={toggleList}
         values={values}
+        setPersons={setPersons}
       />
     </div>
   );
